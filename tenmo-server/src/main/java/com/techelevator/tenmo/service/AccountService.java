@@ -1,7 +1,6 @@
 package com.techelevator.tenmo.service;
 
 import java.math.BigDecimal;
-import java.net.http.HttpResponse;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -25,6 +24,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Service
 public class AccountService {
+
+    //TODO Add DaoException catch to rest of methods
 
     private final AccountDao jdbcAccountDao;
     private final UserDao userDao;

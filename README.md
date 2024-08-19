@@ -241,3 +241,78 @@ Remember that when testing, you're using a copy of the real database. The schema
 The user registration and authentication functionality for the system has already been implemented. If you review the login code, you'll notice that after successful authentication, an instance of `AuthenticatedUser` is stored in the `currentUser` member variable of `App`. The user's authorization token—meaning JWT—can be accessed from `App` as `currentUser.getToken()`.
 
 When the use cases refer to an "authenticated user", this means a request that includes the token as a header. You can also reference other information about the current user by using the `User` object retrieved from `currentUser.getUser()`.
+
+
+# For my team
+
+## One person can do Account and one can do Transfer
+
+### Example for Account:
+
+### Implement client side service
+
+```java
+ //tenmo-client\src\main\java\com\techelevator\tenmo\services\AccountService.java
+ public Account getAccountById(int accountId){
+        Account account = null;
+        try {
+        //TODO implement GET method
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return account;
+    }
+```
+
+The request mappings can be found in the controller files for the temno-server
+
+```java
+   //tenmo-server\src\main\java\com\techelevator\tenmo\controller\AccountController.java
+   @GetMapping("/{userId}")
+   public Account getAccountById(@PathVariable int userId) {
+       return accountService.getAccountById(userId);
+   }
+   
+```
+
+### Implement data access
+
+```java
+   //tenmo-server\src\main\java\com\techelevator\tenmo\dao\JdbcAccountDao.java
+   @Override
+    public Account getAccountByID(int userId) {
+        Account account = null;
+        //TODO implement SQL to get account object using account_id
+        try {
+        //TODO
+        } catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        }
+        return account;
+    }
+```
+
+### Add missing exception handling
+Add to server side service files. Use the correct HTTP status codes
+
+```java
+ //tenmo-server\src\main\java\com\techelevator\tenmo\service\AccountService.java
+ //TODO add exception handling
+ public Account getAccountByUserId(@RequestParam int userId) {
+        return jdbcAccountDao.getAccountByUserID(userId);
+    }
+
+ //This one already has it
+    public Account updateAccountBalance(@PathVariable int id, @Valid @RequestBody Account account) {
+        account.setAccountId(id);
+        try {
+            return jdbcAccountDao.updateAccountBalance(account);
+        } catch (DaoException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account Not Found");
+        }
+
+    }
+```
+
+# Last person can implement DAO testing once the code works
+see testing section above

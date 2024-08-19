@@ -21,48 +21,32 @@ public class JdbcTransferDao implements TransferDao {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Transfer getTransferById(int id) {
+    public Transfer getTransferById(int transferId) {
         Transfer transfer = null;
-        String sql = "SELECT * FROM transfer WHERE transfer_id = ?";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
-        if (rowSet.next()) {
-            transfer = mapRowToTransfer(rowSet);
-        }
+        //TODO get transfer by transfer_id
         return transfer;
     }
 
     @Override
-    public List<Transfer> getTransfersByUserId(int id) {
+    public List<Transfer> getTransfersByUserId(int userId) {
         List<Transfer> transfers = new ArrayList<>();
-        String sql = "select * from transfer where  (account_to in (select account_id from account where user_id = ? ) " +
-            "or account_from in (select account_id from account where user_id = ? ))";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, id);
-        while (rowSet.next()) {
-            transfers.add(mapRowToTransfer(rowSet));
-        }
+        //TODO get list of transfers where the either "account_to" or "account_from" is the account_id of the user_id parameter
         return transfers;
     }
 
     @Override
-    public List<Transfer> getPendingTransfers(int id) {
+    public List<Transfer> getPendingTransfers(int userId) {
         List<Transfer> transfers = new ArrayList<>();
-        String sql = "SELECT * FROM transfer WHERE (transfer_status_id = 1 AND account_from = ?)";
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id);
-        while (rowSet.next()) {
-            transfers.add(mapRowToTransfer(rowSet));
-        }
+        //TODO get list of transfers where the transfer status is pending and account_from is current user's id
         return transfers;
     }
 
     @Override
     public Transfer createTransfer(Transfer transfer) {
         Transfer newTransfer = null;
-        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (?, ?, ?, ?, ?) RETURNING transfer_id";
+        //TODO
         try {
-            int newUserId = jdbcTemplate.queryForObject(sql, int.class, transfer.getTransferTypeId(),
-                    transfer.getTransferStatusId(), transfer.getAccountFrom(), transfer.getAccountTo(),
-                    transfer.getAmount());
-            newTransfer = getTransferById(newUserId);
+        //TODO hint:query for object
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {

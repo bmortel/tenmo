@@ -27,10 +27,7 @@ public class TransferService {
     public Transfer getTransferById(int transferId) {
         Transfer transfer = null;
         try {
-            ResponseEntity<Transfer> response = restTemplate.exchange(API_BASE_URL + "/" + transferId,
-                    HttpMethod.GET, makeAuthEntity(), Transfer.class);
-            transfer = response.getBody();
-
+        //TODO GET method
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -40,9 +37,7 @@ public class TransferService {
     public Transfer[] getTransfersByUserId(int userId) {
         Transfer[] transfers = null;
         try {
-            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "?userId=" + userId,
-                    HttpMethod.GET, makeAuthEntity(), Transfer[].class);
-            transfers = response.getBody();
+        //TODO GET method
         } catch (RestClientResponseException | ResourceAccessException e) {
             System.err.println(e);
             BasicLogger.log(e.getMessage());
@@ -53,9 +48,7 @@ public class TransferService {
     public Transfer[] getPendingTransfers(int accountId) {
         Transfer[] transfers = null;
         try {
-            ResponseEntity<Transfer[]> response = restTemplate.exchange(API_BASE_URL + "/pending?accountId=" + accountId,
-                    HttpMethod.GET, makeAuthEntity(), Transfer[].class);
-            transfers = response.getBody();
+        //TODO GET method
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -66,7 +59,7 @@ public class TransferService {
         HttpEntity<Transfer> entity = makeTransferEntity(newTransfer);
         Transfer returnedTransfer = null;
         try {
-            returnedTransfer = restTemplate.postForObject(API_BASE_URL, entity, Transfer.class);
+        //TODO hint:post for object
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -77,8 +70,7 @@ public class TransferService {
         HttpEntity<Transfer> entity = makeTransferEntity(transfer);
         boolean success = false;
         try {
-            restTemplate.put(API_BASE_URL + "/" + transfer.getTransferId(), entity, makeAuthEntity());
-            success = true;
+        //TODO PUT method
         } catch (RestClientResponseException | ResourceAccessException e) {
             System.out.println("UPDATE TRANSFER ERROR");
             BasicLogger.log(e.getMessage());

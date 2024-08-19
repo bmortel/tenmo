@@ -29,9 +29,7 @@ public class AccountService {
     public Account getAccountById(int accountId){
         Account account = null;
         try {
-            ResponseEntity<Account> response = restTemplate.exchange(API_BASE_URL + "/" + accountId, HttpMethod.GET,
-                    makeAuthEntity(), Account.class);
-            account = response.getBody();
+        //TODO implement GET method
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -41,9 +39,7 @@ public class AccountService {
     public Account getAccountByUserId(int userId) {
         Account account = null;
         try {
-            ResponseEntity<Account> response = restTemplate.exchange(API_BASE_URL + "?userId=" + userId, HttpMethod.GET,
-                    makeAuthEntity(), Account.class);
-            account = response.getBody();
+        //TODO implement GET method
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -53,9 +49,7 @@ public class AccountService {
     public BigDecimal getBalanceByUserId() {
         BigDecimal balance = null;
         try {
-            ResponseEntity<BigDecimal> response = restTemplate.exchange(API_BASE_URL + "/" + currentUser.getUser().getId() + "/balance",
-                    HttpMethod.GET, makeAuthEntity(), BigDecimal.class);
-            balance = response.getBody();
+        //TODO implement GET method
 
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -67,8 +61,7 @@ public class AccountService {
         HttpEntity<Account> entity = makeAccountEntity(account);
         boolean success = false;
         try {
-           restTemplate.put(API_BASE_URL + "/" + account.getAccountId(), entity, makeAuthEntity());
-           success = true;
+        //TODO implement PUT method
         } catch  (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }

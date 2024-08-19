@@ -1,7 +1,6 @@
 package com.techelevator.tenmo.controller;
 
 import java.math.BigDecimal;
-import java.security.Principal;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.security.jwt.TokenProvider;
 import com.techelevator.tenmo.service.AccountService;
 
@@ -53,7 +51,7 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}/balance")
-    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId, @RequestHeader ("Authorization") String token) throws Exception {
+    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId, @RequestHeader ("Authorization") String token) {
         return accountService.getBalanceByUserId(userId, findUser(token));
     }
     
@@ -72,8 +70,7 @@ public class AccountController {
 
     private String findUser(String token){
       String jwt = token.substring(7);
-      String username = tokenProvider.getUsername(jwt);
-      return username;
+      return tokenProvider.getUsername(jwt);
     }
 
 }

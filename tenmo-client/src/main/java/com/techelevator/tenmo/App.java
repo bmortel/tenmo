@@ -250,7 +250,7 @@ public class App {
         for (Transfer transfer : transfers) {
             String toOrFrom = null;
             String otherPerson = null;
-            if (transfer.getTransferStatusId() == 1){
+            if (transfer.getTransferStatusId() == 1) {
                 continue;
             }
             if (userService.getUserByAccountId(transfer.getAccountFrom()).equals(currUserName)) {
@@ -270,7 +270,6 @@ public class App {
                 .promptForMenuSelection("\nPlease enter transfer ID to view details (0 to cancel): ");
         if (menuSelection != 0 && !findAndPrintTransfer(menuSelection)) {
             System.err.println("\nInvalid input");
-            // consoleService.pause();
         }
         return menuSelection;
     }
@@ -316,7 +315,6 @@ public class App {
         Transfer transferToApproveOrReject = transferService.getTransferById(menuSelection);
         if (transferToApproveOrReject == null || transferToApproveOrReject.getTransferStatusId() != 1) {
             System.err.println("\nInvalid input");
-            // consoleService.pause();
         } else {
             Account otherAccount = accountService.getAccountById(transferToApproveOrReject.getAccountTo());
             System.out.println("1: Approve\r\n" + //
@@ -338,7 +336,7 @@ public class App {
 
                 }
             }
-            if (choice == 2){
+            if (choice == 2) {
                 transferToApproveOrReject.setTransferStatusId(3);
                 transferService.updateTransfer(transferToApproveOrReject);
             }

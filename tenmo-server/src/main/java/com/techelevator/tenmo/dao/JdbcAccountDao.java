@@ -24,12 +24,9 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public Account getAccountByID(int userId) {
         Account account = null;
-        String sql = "select account_id, user_id, balance FROM account WHERE account_id = ?";
+        //TODO implement SQL to get account object using account_id
         try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
-            if (rowSet.next()) {
-                account = mapRowToAccount(rowSet);
-            }
+        //TODO
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         }
@@ -39,12 +36,9 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public Account getAccountByUserID(int userId) {
         Account account = null;
-        String sql = "select account_id, user_id, balance FROM account WHERE user_id = ?";
+        //TODO get account object using user_id
         try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
-            if (rowSet.next()) {
-                account = mapRowToAccount(rowSet);
-            }
+        //TODO
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         }
@@ -54,13 +48,9 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public List<Account> getAccounts() {
         List<Account> accounts = new ArrayList<>();
-        String sql = "SELECT * FROM account";
+        //TODO get all accounts
         try {
-            SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-            while (results.next()) {
-                Account account = mapRowToAccount(results);
-                accounts.add(account);
-            }
+        //TODO
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         }
@@ -70,12 +60,9 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public BigDecimal getBalanceByUserId(int userId){
         BigDecimal balance = null;
-        String sql = "select balance FROM account WHERE user_id = ?";
+        //TODO get account balance using user_id
         try {
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, userId);
-            if (rowSet.next()) {
-                 balance = rowSet.getBigDecimal("balance");
-            }
+        //TODO
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         }
@@ -85,13 +72,9 @@ public class JdbcAccountDao implements AccountDao {
     @Override
     public Account updateAccountBalance(Account account) {
         Account updatedAccount = null;
-        String sql = "UPDATE account SET balance = ? WHERE account_id = ?";
+        //TODO 
         try {
-            int rowsAffected = jdbcTemplate.update(sql, account.getBalance(), account.getAccountId());
-            if (rowsAffected == 0) {
-                throw new DaoException("Zero rows affected, expected at least one");
-            }
-            updatedAccount = getAccountByID(account.getAccountId());
+        //TODO
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
         } catch (DataIntegrityViolationException e) {
