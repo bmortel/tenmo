@@ -1,8 +1,11 @@
 package com.techelevator.tenmo.services;
 
+import java.math.BigDecimal;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
@@ -19,22 +22,65 @@ public class AccountService {
     public static final String API_BASE_URL = "http://localhost:8080/accounts";
     private RestTemplate restTemplate = new RestTemplate();
 
-    public void setCurrentUser(AuthenticatedUser user){
+    public void setCurrentUser(AuthenticatedUser user) {
         this.currentUser = user;
     }
 
-    public Account getAccountByUserId(int userID) {
+    public Account getAccountById(int accountId){
         Account account = null;
         try {
-            ResponseEntity<Account> response = restTemplate.exchange(API_BASE_URL + "?userID=" + userID, HttpMethod.GET, makeAuthEntity(), Account.class);
+            ResponseEntity<Account> response = restTemplate.exchange(API_BASE_URL + "/" + accountId, HttpMethod.GET,
+                    makeAuthEntity(), Account.class);
             account = response.getBody();
-            
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return account;
     }
-    
+
+    public Account getAccountByUserId(int userId) {
+        Account account = null;
+        try {
+            ResponseEntity<Account> response = restTemplate.exchange(API_BASE_URL + "?userId=" + userId, HttpMethod.GET,
+                    makeAuthEntity(), Account.class);
+            account = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return account;
+    }
+
+    public BigDecimal getBalanceByUserId() {
+        BigDecimal balance = null;
+        try {
+            ResponseEntity<BigDecimal> response = restTemplate.exchange(API_BASE_URL + "/" + currentUser.getUser().getId() + "/balance",
+                    HttpMethod.GET, makeAuthEntity(), BigDecimal.class);
+            balance = response.getBody();
+
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return balance;
+    }
+
+    public boolean updateAccountBalance(Account account){
+        HttpEntity<Account> entity = makeAccountEntity(account);
+        boolean success = false;
+        try {
+           restTemplate.put(API_BASE_URL + "/" + account.getAccountId(), entity, makeAuthEntity());
+           success = true;
+        } catch  (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return success;
+    }
+
+    private HttpEntity<Account> makeAccountEntity(Account account) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(currentUser.getToken());
+        return new HttpEntity<>(account, headers);
+    }
 
     private HttpEntity<Void> makeAuthEntity() {
         HttpHeaders headers = new HttpHeaders();

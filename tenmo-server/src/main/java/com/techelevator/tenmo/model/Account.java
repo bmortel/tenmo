@@ -1,33 +1,24 @@
 package com.techelevator.tenmo.model;
 
 
+import java.math.BigDecimal;
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter   
 public class Account {
-    
-    @NotBlank
-    private int accountID;
-    @NotBlank
-    private int userID;
-    @NotBlank
-    private double balance;
 
-    public int getAccountID() {
-        return accountID;
-    }
-    public void setAccountID(int accountID) {
-        this.accountID = accountID;
-    }
-    public int getUserID() {
-        return userID;
-    }
-    public void setUserID(int userID) {
-        this.userID = userID;
-    }
-    public double getBalance() {
-        return balance;
-    }
-    public void setBalance(double balance) {
-        this.balance = balance;
-    }
+    @NotNull
+    private int accountId;
+    @NotNull
+    private int userId;
+    @NotNull
+    private BigDecimal balance;
+
+
 }

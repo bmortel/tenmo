@@ -3,6 +3,7 @@ package com.techelevator.tenmo.security.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,7 +32,6 @@ public class TokenProvider implements InitializingBean {
     private final long tokenValidityInMillisecondsForRememberMe;
 
     private Key key;
-
 
     public TokenProvider(
             @Value("${jwt.base64-secret}") String base64Secret,
@@ -79,10 +80,10 @@ public class TokenProvider implements InitializingBean {
                 .parseClaimsJws(token)
                 .getBody();
 
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+        Collection<? extends GrantedAuthority> authorities = Arrays
+                .stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
 
         User principal = new User(claims.getSubject(), "", authorities);
 
@@ -107,5 +108,18 @@ public class TokenProvider implements InitializingBean {
             log.trace("JWT token compact of handler are invalid trace: {}", e);
         }
         return false;
+    }
+
+    public String getUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolve) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolve.apply(claims);
     }
 }
