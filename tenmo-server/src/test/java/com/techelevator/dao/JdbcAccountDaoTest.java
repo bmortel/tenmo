@@ -24,12 +24,13 @@ public class JdbcAccountDaoTest {
 
     @Before
     public void setup() {
+        // Setting up the JdbcTemplate and JdbcAccountDao for testing
         jdbcTemplate = mock(JdbcTemplate.class);
         accountDao = new JdbcAccountDao(jdbcTemplate);
     }
 
 
-    // Mocking the behavior of mapRowToAccount method
+    // Method to map a row from the database to an Account object
     private Account mapRowToAccount(SqlRowSet results) {
         Account account = new Account();
         account.setAccountId(results.getInt("account_id"));
@@ -40,7 +41,10 @@ public class JdbcAccountDaoTest {
 
     @Test
     public void testGetAccountByID_nonExistingAccount() {
-        // Mocking the behavior of jdbcTemplate.queryForRowSet(sql, accountId)
+        // Testing the scenario where the account does not exist in the database
+        // Mocking the behavior of querying for an account by ID
+        // Verifying that null is returned
+
         SqlRowSet mockResults = mock(SqlRowSet.class);
         when(jdbcTemplate.queryForRowSet("SELECT account_id, user_id, balance FROM account WHERE account_id = ?", 1))
                 .thenReturn(mockResults);
@@ -53,6 +57,9 @@ public class JdbcAccountDaoTest {
 
     @Test(expected = DaoException.class)
     public void testGetAccountByID_cannotGetConnectionException() {
+        // Testing the scenario where a CannotGetJdbcConnectionException is thrown
+        // Verifying that a DaoException is thrown
+
         when(jdbcTemplate.queryForRowSet("SELECT account_id, user_id, balance FROM account WHERE account_id = ?", 1))
                 .thenThrow(new CannotGetJdbcConnectionException("Connection error"));
 
@@ -61,7 +68,10 @@ public class JdbcAccountDaoTest {
 
     @Test
     public void testGetAccountByUserID_existingAccount() {
-        // Mocking the behavior of jdbcTemplate.queryForRowSet(sql, userId)
+        // Testing the scenario where an account exists for a given user ID
+        // Mocking the behavior of querying for an account by user ID
+        // Verifying that the correct Account object is returned
+
         SqlRowSet mockResults = mock(SqlRowSet.class);
         when(jdbcTemplate.queryForRowSet("SELECT account_id, user_id, balance FROM account WHERE user_id = ?", 123))
                 .thenReturn(mockResults);
@@ -78,7 +88,10 @@ public class JdbcAccountDaoTest {
 
     @Test
     public void testGetAccountByUserID_nonExistingAccount() {
-        // Mocking the behavior of jdbcTemplate.queryForRowSet(sql, userId)
+        // Testing the scenario where no account exists for a given user ID
+        // Mocking the behavior of querying for an account by user ID
+        // Verifying that null is returned
+
         SqlRowSet mockResults = mock(SqlRowSet.class);
         when(jdbcTemplate.queryForRowSet("SELECT account_id, user_id, balance FROM account WHERE user_id = ?", 123))
                 .thenReturn(mockResults);
@@ -90,6 +103,9 @@ public class JdbcAccountDaoTest {
 
     @Test(expected = DaoException.class)
     public void testGetAccountByUserID_cannotGetConnectionException() {
+        // Testing the scenario where a CannotGetJdbcConnectionException is thrown
+        // Verifying that a DaoException is thrown
+
         when(jdbcTemplate.queryForRowSet("SELECT account_id, user_id, balance FROM account WHERE user_id = ?", 123))
                 .thenThrow(new CannotGetJdbcConnectionException("Connection error"));
 
@@ -98,7 +114,10 @@ public class JdbcAccountDaoTest {
 
     @Test
     public void testGetAccounts_multipleAccounts() {
-        // Mocking the behavior of jdbcTemplate.queryForRowSet(sql)
+        // Testing the scenario where multiple accounts are returned
+        // Mocking the behavior of querying for all accounts
+        // Verifying that the correct list of Account objects is returned
+
         SqlRowSet mockResults = mock(SqlRowSet.class);
         when(jdbcTemplate.queryForRowSet("SELECT account_id, user_id, balance FROM account"))
                 .thenReturn(mockResults);
@@ -127,7 +146,10 @@ public class JdbcAccountDaoTest {
 
     @Test
     public void testGetAccounts_noAccounts() {
-        // Mocking the behavior of jdbcTemplate.queryForRowSet(sql)
+        // Testing the scenario where no accounts are returned
+        // Mocking the behavior of querying for all accounts
+        // Verifying that an empty list is returned
+
         SqlRowSet mockResults = mock(SqlRowSet.class);
         when(jdbcTemplate.queryForRowSet("SELECT account_id, user_id, balance FROM account"))
                 .thenReturn(mockResults);
@@ -139,6 +161,9 @@ public class JdbcAccountDaoTest {
 
     @Test(expected = DaoException.class)
     public void testGetAccounts_cannotGetConnectionException() {
+        // Testing the scenario where a CannotGetJdbcConnectionException is thrown
+        // Verifying that a DaoException is thrown
+
         when(jdbcTemplate.queryForRowSet("SELECT account_id, user_id, balance FROM account"))
                 .thenThrow(new CannotGetJdbcConnectionException("Connection error"));
 
@@ -146,7 +171,10 @@ public class JdbcAccountDaoTest {
     }
     @Test
     public void testGetBalanceByUserId_existingBalance() {
-        // Mocking the behavior of jdbcTemplate.queryForRowSet(sql, userId)
+        // Testing the scenario where a balance exists for a given user ID
+        // Mocking the behavior of querying for the balance by user ID
+        // Verifying that the correct balance is returned
+
         SqlRowSet mockResults = mock(SqlRowSet.class);
         when(jdbcTemplate.queryForRowSet("SELECT balance FROM account WHERE user_id = ?", 123))
                 .thenReturn(mockResults);
@@ -159,7 +187,10 @@ public class JdbcAccountDaoTest {
 
     @Test
     public void testGetBalanceByUserId_nonExistingBalance() {
-        // Mocking the behavior of jdbcTemplate.queryForRowSet(sql, userId)
+        // Testing the scenario where no balance exists for a given user ID
+        // Mocking the behavior of querying for the balance by user ID
+        // Verifying that null is returned
+
         SqlRowSet mockResults = mock(SqlRowSet.class);
         when(jdbcTemplate.queryForRowSet("SELECT balance FROM account WHERE user_id = ?", 456))
                 .thenReturn(mockResults);
@@ -171,6 +202,9 @@ public class JdbcAccountDaoTest {
 
     @Test(expected = DaoException.class)
     public void testGetBalanceByUserId_cannotGetConnectionException() {
+        // Testing the scenario where a CannotGetJdbcConnectionException is thrown
+        // Verifying that a DaoException is thrown
+
         when(jdbcTemplate.queryForRowSet("SELECT balance FROM account WHERE user_id = ?", 789))
                 .thenThrow(new CannotGetJdbcConnectionException("Connection error"));
 
