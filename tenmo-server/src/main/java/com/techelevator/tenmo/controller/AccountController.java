@@ -1,3 +1,4 @@
+// Controller for managing accounts
 package com.techelevator.tenmo.controller;
 
 import java.math.BigDecimal;
@@ -24,33 +25,35 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
-
+// Ensures that only authenticated users can access these endpoints
 @PreAuthorize("isAuthenticated()")
 @RestController
 @RequestMapping("/accounts")
 @RequiredArgsConstructor
 public class AccountController {
 
-   private final TokenProvider tokenProvider;
-   private final AccountService accountService;
+    private final TokenProvider tokenProvider;
+    private final AccountService accountService;
 
-   @GetMapping("/{userId}")
-   public Account getAccountById(@PathVariable int userId) {
-       return accountService.getAccountById(userId);
-   }
-   
-    
-    @GetMapping
-    public Account getAccountByUserId(@RequestParam int userId) {
-       return  accountService.getAccountByUserId(userId);
+    // Get account details by user id
+    @GetMapping("/{userId}")
+    public Account getAccountById(@PathVariable int userId) {
+        return accountService.getAccountById(userId);
     }
 
+    // Get account details by user id as a request parameter
+    @GetMapping
+    public Account getAccountByUserId(@RequestParam int userId) {
+        return  accountService.getAccountByUserId(userId);
+    }
+
+    // Get details of all accounts
     @GetMapping("/all")
     public List<Account> getAllAccounts() {
         return accountService.getAllAccounts();
     }
 
+    // Get balance of an account by user id
     @GetMapping("/user/{userId}/balance")
     public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId) {
         BigDecimal balance = accountService.getBalanceByUserId(userId);
@@ -62,23 +65,23 @@ public class AccountController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
 
+    // Update account balance
     @PutMapping("/{id}")
     public Account updateAccountBalance(@PathVariable int id, @Valid @RequestBody Account account) {
-       return accountService.updateAccountBalance(id, account);
+        return accountService.updateAccountBalance(id, account);
     }
 
+    // Test method to retrieve user details
     @GetMapping("/test")
     public String getMethodName(@RequestHeader("Authorization") String token) {
         return findUser(token);
     }
-    
 
-
+    // Extract username from token
     private String findUser(String token){
-      String jwt = token.substring(7);
-      return tokenProvider.getUsername(jwt);
+        String jwt = token.substring(7);
+        return tokenProvider.getUsername(jwt);
     }
 
 }
