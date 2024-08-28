@@ -10,16 +10,22 @@ import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.*;
 
+/**
+ * The main application class for the TEnmo money transfer system.
+ */
 public class App {
 
+    // Base URL for the API
     private static final String API_BASE_URL = "http://localhost:8080/";
 
+    // Service instances
     private final ConsoleService consoleService = new ConsoleService();
     private final AccountService accountService = new AccountService();
     private final TransferService transferService = new TransferService();
     private final UserService userService = new UserService();
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
 
+    // Current user information
     private AuthenticatedUser currentUser;
     private int currUserId;
     private String currUserName;
@@ -30,6 +36,9 @@ public class App {
         app.run();
     }
 
+    /**
+     * Starts the application by printing a greeting, handling login, and displaying the main menu.
+     */
     private void run() {
         consoleService.printGreeting();
         loginMenu();
@@ -41,6 +50,9 @@ public class App {
         }
     }
 
+    /**
+     * Handles the login menu options.
+     */
     private void loginMenu() {
         int menuSelection = -1;
         while (menuSelection != 0 && currentUser == null) {
@@ -57,6 +69,9 @@ public class App {
         }
     }
 
+    /**
+     * Handles the user registration process.
+     */
     private void handleRegister() {
         System.out.println("Please register a new user account");
         UserCredentials credentials = consoleService.promptForCredentials();
@@ -67,6 +82,9 @@ public class App {
         }
     }
 
+    /**
+     * Handles the user login process.
+     */
     private void handleLogin() {
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
@@ -78,6 +96,9 @@ public class App {
         userService.setAuthUser(currentUser);
     }
 
+    /**
+     * Displays the main menu and handles user selections.
+     */
     private void mainMenu() {
         int menuSelection = -1;
         while (menuSelection != 0) {
@@ -102,6 +123,9 @@ public class App {
         }
     }
 
+    /**
+     * Displays the current account balance.
+     */
     private void viewCurrentBalance() {
         BigDecimal balance = accountService.getBalanceByUserId();
         if (balance == null) {
@@ -115,6 +139,9 @@ public class App {
         }
     }
 
+    /**
+     * Displays the transfer history for the current user.
+     */
     private void viewTransferHistory() {
         int menuSelection = -1;
         Transfer[] transfers = transferService.getTransfersByUserId(currUserId);
@@ -122,14 +149,13 @@ public class App {
             if (transfers == null || transfers.length == 0) {
                 System.out.println("No past transfers");
                 break;
-
             } else {
                 menuSelection = transferHistoryMenu(transfers);
             }
         }
     }
-
     private void viewPendingRequests() {
+
         int menuSelection = -1;
         while (menuSelection != 0) {
             Transfer[] transfers = transferService.getPendingTransfers((currUserAccount.getAccountId()));
@@ -147,6 +173,13 @@ public class App {
     }
 
     private void sendBucks() {
+        // Code implementation for sending TE bucks
+
+/*
+  Method to prompt the user for the amount to send and complete the transfer.
+  Validates the amount, user balance, and updates the account balances accordingly.
+ */
+
         int menuSelection = -1;
         while (menuSelection != 0) {
             User[] users = userService.getUsers();
@@ -177,6 +210,13 @@ public class App {
     }
 
     private void getAmountAndSend(int userId) {
+        // Code implementation for getting amount and sending the TE bucks
+
+/*
+  Method to initiate the process of requesting TE bucks from another user.
+  Displays a list of users to select from and prompts for the ID of the user to request from.
+  Handles validation of user input before sending the request.
+ */
         BigDecimal amount = null;
         amount = consoleService.promptForBigDecimal("Enter amount: ");
         if (amount.doubleValue() <= 0) {
@@ -197,6 +237,12 @@ public class App {
     }
 
     private void requestBucks() {
+        // Code implementation for requesting TE bucks
+/*
+  Method to prompt the user for the amount to request and create a transfer request.
+  Validates the amount and creates the transfer request to the selected user.
+ */
+
         int menuSelection = -1;
         while (menuSelection != 0) {
             User[] users = userService.getUsers();
@@ -227,6 +273,12 @@ public class App {
     }
 
     private void getAmountAndRequest(int userId) {
+        // Code implementation for getting amount and making a transfer request
+/*
+  Method to check if a user with a specific ID exists in the provided array of users.
+  Returns true if the user is found, false otherwise.
+ */
+
         BigDecimal amount = null;
         amount = consoleService.promptForBigDecimal("Enter amount: ");
         if (amount.doubleValue() <= 0) {
@@ -240,6 +292,12 @@ public class App {
     }
 
     private boolean foundUser(int userId, User[] users) {
+        // Code implementation for finding a user
+/*
+  Method to display a menu of transfer history and allow the user to select a transfer to view details.
+  Prints transfer details if a valid transfer ID is provided.
+ */
+
         boolean found = false;
         for (User user : users) {
             if (user.getId() == userId) {
@@ -250,6 +308,12 @@ public class App {
     }
 
     private int transferHistoryMenu(Transfer[] transfers) {
+        // Code implementation for displaying transfer history menu
+
+/*
+  Method to find and print the details of a specific transfer based on the transfer ID.
+  Returns true if the transfer is found and printed, false otherwise.
+ */
         int menuSelection;
         System.out.println("-------------------------------------------");
         System.out.println("Transfers");
@@ -283,6 +347,12 @@ public class App {
     }
 
     private boolean findAndPrintTransfer(int transferId) {
+        // Code implementation for finding and printing transfer details
+
+/**
+ * Method to display a menu of pending transfer requests and allow the user to approve or reject a request.
+ * Handles the approval or rejection of transfer requests based on user input.
+ */
         Transfer transfer = transferService.getTransferById(transferId);
         if (transfer != null) {
             System.out.println("--------------------------------------------\r\n" + //
@@ -301,6 +371,12 @@ public class App {
     }
 
     private int pendingRequestsMenu(Transfer[] transfers) {
+        // Code implementation for displaying pending transfer requests menu
+
+/*
+  Method to approve or reject a specific transfer request.
+  Updates the transfer status and account balances accordingly.
+ */
         int menuSelection;
         System.out.println("-------------------------------------------");
         System.out.println("Transfers");
@@ -320,6 +396,11 @@ public class App {
     }
 
     private void approveOrReject(int menuSelection) {
+        // Code implementation for approving or rejecting a transfer request
+
+/*
+  Method to get the description of a transfer type based on the provided ID.
+ */
         Transfer transferToApproveOrReject = transferService.getTransferById(menuSelection);
         if (transferToApproveOrReject == null || transferToApproveOrReject.getTransferStatusId() != 1) {
             System.err.println("\nInvalid input");
@@ -352,6 +433,11 @@ public class App {
     }
 
     private String getTypeDesc(int id) {
+        // Code implementation for getting transfer type description
+
+/*
+  Method to get the description of a transfer status based on the provided ID.
+ */
         String type = null;
         if (id == 1) {
             type = "Request";
@@ -362,6 +448,8 @@ public class App {
     }
 
     private String getStatusDesc(int id) {
+        // Code implementation for getting transfer status description
+
         String status = null;
         if (id == 1) {
             status = "Pending";
@@ -373,3 +461,4 @@ public class App {
         return status;
     }
 }
+
