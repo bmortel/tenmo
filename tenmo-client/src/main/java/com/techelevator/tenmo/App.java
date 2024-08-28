@@ -104,7 +104,15 @@ public class App {
 
     private void viewCurrentBalance() {
         BigDecimal balance = accountService.getBalanceByUserId();
-        System.out.println("Your current account balance is: " + NumberFormat.getCurrencyInstance().format(balance));
+        if (balance == null) {
+            System.err.println("Error: Balance is null");
+        } else {
+            try {
+                System.out.println("Your current account balance is: " + NumberFormat.getCurrencyInstance().format(balance));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Error: Cannot format balance - " + e.getMessage());
+            }
+        }
     }
 
     private void viewTransferHistory() {

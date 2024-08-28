@@ -26,20 +26,29 @@ public class AccountService {
         this.currentUser = user;
     }
 
-    public Account getAccountById(int accountId){
+    public Account getAccountById(int accountId) {
         Account account = null;
         try {
-        //TODO implement GET method
+            ResponseEntity<Account> response = restTemplate.exchange(
+                    API_BASE_URL + "/" + accountId,
+                    HttpMethod.GET,
+                    makeAuthEntity(),
+                    Account.class);
+            account = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return account;
     }
-
     public Account getAccountByUserId(int userId) {
         Account account = null;
         try {
-        //TODO implement GET method
+            ResponseEntity<Account> response = restTemplate.exchange(
+                    API_BASE_URL + "/user/" + userId,
+                    HttpMethod.GET,
+                    makeAuthEntity(),
+                    Account.class);
+            account = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -49,20 +58,30 @@ public class AccountService {
     public BigDecimal getBalanceByUserId() {
         BigDecimal balance = null;
         try {
-        //TODO implement GET method
-
+            ResponseEntity<BigDecimal> response = restTemplate.exchange(
+                    API_BASE_URL + "/user/" + currentUser.getUser().getId() + "/balance",
+                    HttpMethod.GET,
+                    makeAuthEntity(),
+                    BigDecimal.class);
+            balance = response.getBody();
+            if (balance == null) {
+                System.err.println("Error: Balance is null");
+            } else {
+                System.out.println("Balance retrieved: " + balance);
+            }
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return balance;
     }
 
-    public boolean updateAccountBalance(Account account){
+    public boolean updateAccountBalance(Account account) {
         HttpEntity<Account> entity = makeAccountEntity(account);
         boolean success = false;
         try {
-        //TODO implement PUT method
-        } catch  (RestClientResponseException | ResourceAccessException e) {
+            restTemplate.put(API_BASE_URL + "/" + account.getAccountId(), entity);
+            success = true;
+        } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return success;

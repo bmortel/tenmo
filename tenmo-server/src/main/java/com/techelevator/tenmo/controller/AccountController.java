@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,9 +51,16 @@ public class AccountController {
         return accountService.getAllAccounts();
     }
 
-    @GetMapping("/{userId}/balance")
-    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId, @RequestHeader ("Authorization") String token) {
-        return accountService.getBalanceByUserId(userId, findUser(token));
+    @GetMapping("/user/{userId}/balance")
+    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId) {
+        BigDecimal balance = accountService.getBalanceByUserId(userId);
+        if (balance != null) {
+            System.out.println("Balance retrieved for user " + userId + ": " + balance);
+            return new ResponseEntity<>(balance, HttpStatus.OK);
+        } else {
+            System.err.println("Balance not found for user " + userId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
     
 

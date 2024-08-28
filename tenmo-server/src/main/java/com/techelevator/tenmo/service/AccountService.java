@@ -17,7 +17,6 @@ import com.techelevator.tenmo.dao.AccountDao;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.exception.DaoException;
 import com.techelevator.tenmo.model.Account;
-import com.techelevator.tenmo.model.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -52,12 +51,12 @@ public class AccountService {
 
     }
 
-    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId, String username) {
-        User user = userDao.getUserById(userId);
-        if (user.getUsername().equals(username)) {
-            return new ResponseEntity<>(jdbcAccountDao.getBalanceByUserId(userId), HttpStatus.OK);
+    public BigDecimal getBalanceByUserId(@PathVariable int userId) {
+        BigDecimal balance = jdbcAccountDao.getBalanceByUserId(userId);
+        if (balance != null) {
+            return new ResponseEntity<>(balance, HttpStatus.OK).getBody();
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Username and userId does not match");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Balance not found");
         }
     }
 }
