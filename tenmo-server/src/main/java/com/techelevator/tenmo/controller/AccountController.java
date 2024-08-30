@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
 // Ensures that only authenticated users can access these endpoints
 @PreAuthorize("isAuthenticated()")
@@ -35,15 +34,15 @@ public class AccountController {
     private final TokenProvider tokenProvider;
     private final AccountService accountService;
 
-    // Get account details by user id
-    @GetMapping("/{userId}")
-    public Account getAccountById(@PathVariable int userId) {
-        return accountService.getAccountById(userId);
+    // Get account details by account id
+    @GetMapping("/{accountId}")
+    public Account getAccountById(@PathVariable int accountId) {
+        return accountService.getAccountById(accountId);
     }
 
-    // Get account details by user id as a request parameter
-    @GetMapping
-    public Account getAccountByUserId(@RequestParam int userId) {
+    // Get account details by user id as a path variable
+    @GetMapping("/user/{userId}")
+    public Account getAccountByUserId(@PathVariable int userId) {
         return  accountService.getAccountByUserId(userId);
     }
 
@@ -55,13 +54,13 @@ public class AccountController {
 
     // Get balance of an account by user id
     @GetMapping("/user/{userId}/balance")
-    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId) {
-        BigDecimal balance = accountService.getBalanceByUserId(userId);
+    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId, @RequestHeader ("Authorization") String token) {
+        BigDecimal balance = accountService.getBalanceByUserId(userId, findUser(token));
         if (balance != null) {
-            System.out.println("Balance retrieved for user " + userId + ": " + balance);
+            //System.out.println("Balance retrieved for user " + userId + ": " + balance);
             return new ResponseEntity<>(balance, HttpStatus.OK);
         } else {
-            System.err.println("Balance not found for user " + userId);
+            //System.err.println("Balance not found for user " + userId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

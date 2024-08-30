@@ -78,11 +78,11 @@ public class AccountService {
                     makeAuthEntity(),
                     BigDecimal.class);
             balance = response.getBody();
-            if (balance == null) {
-                System.err.println("Error: Balance is null");
-            } else {
-                System.out.println("Balance retrieved: " + balance);
-            }
+            // if (balance == null) {
+            //     System.err.println("Error: Balance is null");
+            // } else {
+            //     System.out.println("Balance retrieved: " + balance);
+            // }
         } catch (RestClientResponseException | ResourceAccessException e) {
             // Log any exceptions that occur during the request
             BasicLogger.log(e.getMessage());
