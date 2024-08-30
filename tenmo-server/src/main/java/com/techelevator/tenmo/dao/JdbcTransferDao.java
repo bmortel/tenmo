@@ -20,32 +20,78 @@ public class JdbcTransferDao implements TransferDao {
 
     private final JdbcTemplate jdbcTemplate;
 
+    //Retrieves a tranfer by its ID from the database.
     @Override
     public Transfer getTransferById(int transferId) {
         Transfer transfer = null;
         //TODO get transfer by transfer_id
+        String sql = "SELECT * FROM transfer WHERE transfer_id = ?";
+        try{
+            SqlRowSet rs = jdbcTemplate.queryForRowSet (sql, transferId );
+            if (rs.next()){
+                transfer = mapRowToTransfer(rs)
+            } catch (CannotGetJdbcConnectionException e) {
+                throw new DaoException("Unable to connect to server or database", e);
+            } catch (DataIntegrityViolationException e) {
+                throw new DaoException("Data integrity violation", e);
+        }
         return transfer;
     }
 
+    // Retrieves a list of transfers associated with a specific user ID.
     @Override
     public List<Transfer> getTransfersByUserId(int userId) {
         List<Transfer> transfers = new ArrayList<>();
-        //TODO get list of transfers where the either "account_to" or "account_from" is the account_id of the user_id parameter
+        //TODO get list of transfers where the either "account_to" or "account_from" is the account_id of the user_id parameterS
+        String sql = "SELECT * FROM transfer WHERE account_to = ? OR account_from = ?";
+        try {
+            SqlRowSet rs = jdbcTemplate.queryForRowSet (sql, userId, userId);
+            while (rs.next()){
+                transfers.add(mapRowToTransfer(rs));
+            }catch (CannotGetJdbcConnectionException e) {
+                throw new DaoException("Unable to connect to server or database", e);
+            } catch (DataIntegrityViolationException e) {
+                throw new DaoException("Data integrity violation", e);
+            }
+
         return transfers;
     }
 
+    // Retrieves a list of transfers associated with a specifeic user ID.
     @Override
     public List<Transfer> getPendingTransfers(int userId) {
         List<Transfer> transfers = new ArrayList<>();
         //TODO get list of transfers where the transfer status is pending and account_from is current user's id
+        String sql = "SELECT * FROM transfer WHERE transfer_status_id = 1 AND account_from = ?";
+        try{
+            SqlRowSet rs = jdbcTemplate.queryForRowSet(sql, userId);
+            while (rs.next()){
+                transfers.add(mapRowToTransfer(rs));
+            }
+        }catch (CannotGetJdbcConnectionException e) {
+            throw new DaoException("Unable to connect to server or database", e);
+        } catch (DataIntegrityViolationException e) {
+            throw new DaoException("Data integrity violation", e);
+        }
         return transfers;
     }
 
+    // Creates a new transfer in the database.
     @Override
     public Transfer createTransfer(Transfer transfer) {
         Transfer newTransfer = null;
         //TODO
+        String sql = "INSERT INTO transfer (transfer_type_id, transfer_status_id, account_from, account_to, amount)" +
+                "VALUES (?, ?, ?, ?, ?)";
         try {
+            int rowsAffected = jdbcTemplate.update (sql, transfer.getTransferTypeId(), 1, transfer.getAccountFrom(),
+                    transfer.getAccountTo(), transfer.getamount());
+            if (rowsAffected == 1) {
+                newTransfer = jdbcTemplate.queryForObject ("SELECT * FROM transfer WHERE account_from = ? AND amount = ?",
+                                mapRowToTransfer, transfer.getAccountFrom(), transfer.getAmount());
+            }else {
+                throw new DaoException("An unexpected error occured while creating the transfer.");
+            }
         //TODO hint:query for object
         } catch (CannotGetJdbcConnectionException e) {
             throw new DaoException("Unable to connect to server or database", e);
@@ -54,7 +100,7 @@ public class JdbcTransferDao implements TransferDao {
         }
         return newTransfer;
     }
-
+    //Updates the status of a transfer in the database.
     @Override
     public Transfer updateTransfer(Transfer transfer) {
         Transfer updatedTransfer = null;
