@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class AccountService {
 
-    //TODO Add DaoException catch to rest of methods
+    // TODO Add DaoException catch to rest of methods
 
     private final AccountDao jdbcAccountDao;
     private final UserDao userDao;
@@ -34,7 +34,7 @@ public class AccountService {
         return jdbcAccountDao.getAccounts();
     }
 
-    public Account getAccountById(@PathVariable int accountId){
+    public Account getAccountById(@PathVariable int accountId) {
         return jdbcAccountDao.getAccountByID(accountId);
     }
 

@@ -43,7 +43,7 @@ public class AccountController {
     // Get account details by user id as a path variable
     @GetMapping("/user/{userId}")
     public Account getAccountByUserId(@PathVariable int userId) {
-        return  accountService.getAccountByUserId(userId);
+        return accountService.getAccountByUserId(userId);
     }
 
     // Get details of all accounts
@@ -54,13 +54,14 @@ public class AccountController {
 
     // Get balance of an account by user id
     @GetMapping("/user/{userId}/balance")
-    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId, @RequestHeader ("Authorization") String token) {
+    public ResponseEntity<BigDecimal> getBalanceByUserId(@PathVariable int userId,
+            @RequestHeader("Authorization") String token) {
         BigDecimal balance = accountService.getBalanceByUserId(userId, findUser(token));
         if (balance != null) {
-            //System.out.println("Balance retrieved for user " + userId + ": " + balance);
+            // System.out.println("Balance retrieved for user " + userId + ": " + balance);
             return new ResponseEntity<>(balance, HttpStatus.OK);
         } else {
-            //System.err.println("Balance not found for user " + userId);
+            // System.err.println("Balance not found for user " + userId);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -78,7 +79,7 @@ public class AccountController {
     }
 
     // Extract username from token
-    private String findUser(String token){
+    private String findUser(String token) {
         String jwt = token.substring(7);
         return tokenProvider.getUsername(jwt);
     }

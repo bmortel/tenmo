@@ -79,9 +79,9 @@ public class AccountService {
                     BigDecimal.class);
             balance = response.getBody();
             // if (balance == null) {
-            //     System.err.println("Error: Balance is null");
+            // System.err.println("Error: Balance is null");
             // } else {
-            //     System.out.println("Balance retrieved: " + balance);
+            // System.out.println("Balance retrieved: " + balance);
             // }
         } catch (RestClientResponseException | ResourceAccessException e) {
             // Log any exceptions that occur during the request
