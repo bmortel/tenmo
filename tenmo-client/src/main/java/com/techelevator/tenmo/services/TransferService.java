@@ -41,7 +41,7 @@ public class TransferService {
     //Fetches a list of transfers for a given user ID from the API.
     public Transfer[] getTransfersByUserId(int userId) {
         Transfer[] transfers = null;
-        String url = API_BASE_URL + "/byuser" + userId;
+        String url = API_BASE_URL + "?userId=" + userId;
         try {
         //TODO GET method
             ResponseEntity<Transfer[]> response = restTemplate.exchange(url, HttpMethod.GET, makeAuthEntity(), Transfer[].class);
@@ -56,11 +56,11 @@ public class TransferService {
     // Fetches a list of pending transfers for a given account ID from the API.
     public Transfer[] getPendingTransfers(int accountId) {
         Transfer[] transfers = null;
-        String url = API_BASE_URL + "/pending" + accountId;
+        String url = API_BASE_URL + "/pending?accountId=" + accountId;
         try {
         //TODO GET method
             ResponseEntity<Transfer[]> response = restTemplate.exchange(url, HttpMethod.GET, makeAuthEntity(), Transfer[].class);
-            transfers = response.getBody;
+            transfers = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -74,8 +74,8 @@ public class TransferService {
         String url = API_BASE_URL;
         try {
         //TODO hint:post for object
-            ResponseEntity<Tranfer> rsponse = restTemplate.exchange(url, HttpMethod.POST, entity, Transfer.class);
-            returnedTransfer = respose.getBody();
+            ResponseEntity<Transfer> response = restTemplate.exchange(url, HttpMethod.POST, entity, Transfer.class);
+            returnedTransfer = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -87,7 +87,7 @@ public class TransferService {
         HttpEntity<Transfer> entity = makeTransferEntity(transfer);
         boolean success = false;
 
-        String url = API_BASE_URL + "/" + transfer.getTranferId();
+        String url = API_BASE_URL + "/" + transfer.getTransferId();
         try {
         //TODO PUT method
             restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);

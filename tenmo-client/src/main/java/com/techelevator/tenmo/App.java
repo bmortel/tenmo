@@ -163,65 +163,88 @@ public class App {
         while (menuSelection != 0) {
             Transfer[] transfers = transferService.getPendingTransfers((currUserAccount.getAccountId()));
             if (transfers == null || transfers.length == 0) {
-                System.out.println("No pending transfers");
+                System.out.println("No transfers to approve or reject");
                 break;
             } else {
                 menuSelection = pendingRequestsMenu(transfers);
             }
             if (menuSelection != 0) {
                 approveOrReject(menuSelection);
-
+                menuSelection = 0;
             }
         }
     }
 
+    /**
+     * Method to prompt the user for the amount to send and complete the transfer.
+     * Validates the amount, user balance, and updates the account balances
+     * accordingly.
+     */
     private void sendBucks() {
-        // Code implementation for sending TE bucks
-
-        /*
-         * Method to prompt the user for the amount to send and complete the transfer.
-         * Validates the amount, user balance, and updates the account balances
-         * accordingly.
-         */
 
         int menuSelection = -1;
         while (menuSelection != 0) {
             User[] users = userService.getUsers();
-            System.out.println("-------------------------------------------\r\n" + //
-                    "Users\r\n" + //
-                    "ID          Name\r\n" + //
-                    "-------------------------------------------");
-            for (User user : users) {
-                String leftPad = "%-10d %s%n";
-                if (!user.equals(currentUser.getUser())) {
-                    System.out.printf(leftPad, user.getId(), user.getUsername());
-                }
+            if (users.length == 1) {
+                System.out.println("No other users found");
+                return;
             }
-            System.out.println("---------");
+            printUsers(users);
             menuSelection = consoleService.promptForInt("Enter ID of user you are sending to (0 to cancel):");
             if (menuSelection == 0) {
-                break;
+                return;
             } else if (menuSelection == currentUser.getUser().getId()) {
                 System.err.println("Cannot send TE bucks to self");
             } else if (!foundUser(menuSelection, users)) {
                 System.err.println("Invalid ID");
             } else {
                 getAmountAndSend(menuSelection);
+                menuSelection = 0;
             }
 
         }
 
     }
 
-    private void getAmountAndSend(int userId) {
-        // Code implementation for getting amount and sending the TE bucks
+    /**
+     * Method to prompt the user for the amount to request and create a transfer
+     * request.
+     * Validates the amount and creates the transfer request to the selected user.
+     */
+    private void requestBucks() {
 
-        /*
-         * Method to initiate the process of requesting TE bucks from another user.
-         * Displays a list of users to select from and prompts for the ID of the user to
-         * request from.
-         * Handles validation of user input before sending the request.
-         */
+        int menuSelection = -1;
+        while (menuSelection != 0) {
+            User[] users = userService.getUsers();
+            if (users.length == 1) {
+                System.out.println("No other users found");
+                break;
+            }
+            printUsers(users);
+            menuSelection = consoleService.promptForInt("Enter ID of user you are requesting from (0 to cancel):");
+            if (menuSelection == 0) {
+                return;
+            } else if (menuSelection == currentUser.getUser().getId()) {
+                System.err.println("Cannot request TE bucks from self");
+            } else if (!foundUser(menuSelection, users)) {
+                System.err.println("Invalid ID");
+            } else {
+                getAmountAndRequest(menuSelection);
+                menuSelection = 0;
+            }
+
+        }
+
+    }
+
+    /**
+     * Method to initiate the process of sending TE bucks to another user.
+     * Displays a list of users to select from and prompts for the ID of the user to
+     * send to.
+     * Handles validation of user input before sending the request.
+     */
+    private void getAmountAndSend(int userId) {
+
         BigDecimal amount = null;
         amount = consoleService.promptForBigDecimal("Enter amount: ");
         if (amount.doubleValue() <= 0) {
@@ -241,50 +264,14 @@ public class App {
         }
     }
 
-    private void requestBucks() {
-        // Code implementation for requesting TE bucks
-        /*
-         * Method to prompt the user for the amount to request and create a transfer
-         * request.
-         * Validates the amount and creates the transfer request to the selected user.
-         */
-
-        int menuSelection = -1;
-        while (menuSelection != 0) {
-            User[] users = userService.getUsers();
-            System.out.println("-------------------------------------------\r\n" + //
-                    "Users\r\n" + //
-                    "ID          Name\r\n" + //
-                    "-------------------------------------------");
-            for (User user : users) {
-                String leftPad = "%-10d %s%n";
-                if (!user.equals(currentUser.getUser())) {
-                    System.out.printf(leftPad, user.getId(), user.getUsername());
-                }
-            }
-            System.out.println("---------");
-            menuSelection = consoleService.promptForInt("Enter ID of user you are requesting from (0 to cancel):");
-            if (menuSelection == 0) {
-                break;
-            } else if (menuSelection == currentUser.getUser().getId()) {
-                System.err.println("Cannot request TE bucks from self");
-            } else if (!foundUser(menuSelection, users)) {
-                System.err.println("Invalid ID");
-            } else {
-                getAmountAndRequest(menuSelection);
-            }
-
-        }
-
-    }
-
+    /**
+     * Method to initiate the process of requesting TE bucks from another user.
+     * Displays a list of users to select from and prompts for the ID of the user to
+     * request from.
+     * Handles validation of user input before sending the request.
+     */
     private void getAmountAndRequest(int userId) {
         // Code implementation for getting amount and making a transfer request
-        /*
-         * Method to check if a user with a specific ID exists in the provided array of
-         * users.
-         * Returns true if the user is found, false otherwise.
-         */
 
         BigDecimal amount = null;
         amount = consoleService.promptForBigDecimal("Enter amount: ");
@@ -298,42 +285,20 @@ public class App {
         }
     }
 
-    private boolean foundUser(int userId, User[] users) {
-        // Code implementation for finding a user
-        /*
-         * Method to display a menu of transfer history and allow the user to select a
-         * transfer to view details.
-         * Prints transfer details if a valid transfer ID is provided.
-         */
-
-        boolean found = false;
-        for (User user : users) {
-            if (user.getId() == userId) {
-                found = true;
-            }
-        }
-        return found;
-    }
-
+    /**
+     * Displays a menu of transfer history and allows the user to select a
+     * transfer to view details.
+     * Prints transfer details if a valid transfer ID is provided.
+     */
     private int transferHistoryMenu(Transfer[] transfers) {
-        // Code implementation for displaying transfer history menu
-
-        /*
-         * Method to find and print the details of a specific transfer based on the
-         * transfer ID.
-         * Returns true if the transfer is found and printed, false otherwise.
-         */
         int menuSelection;
-        System.out.println("-------------------------------------------");
+        System.out.println("-----------------------------------------------------------");
         System.out.println("Transfers");
-        System.out.println("ID         From/To                  Amount");
-        System.out.println("-------------------------------------------");
+        System.out.println("ID         From/To                  Amount          Status");
+        System.out.println("-----------------------------------------------------------");
         for (Transfer transfer : transfers) {
             String toOrFrom = null;
             String otherPerson = null;
-            if (transfer.getTransferStatusId() == 1) {
-                continue;
-            }
             if (userService.getUserByAccountId(transfer.getAccountFrom()).equals(currUserName)) {
                 toOrFrom = "To:";
                 otherPerson = userService.getUserByAccountId(transfer.getAccountTo());
@@ -341,9 +306,10 @@ public class App {
                 toOrFrom = "From:";
                 otherPerson = userService.getUserByAccountId(transfer.getAccountFrom());
             }
-            String leftPad = "%-10d %s %-18s%s%n";
+            String leftPad = "%-10d %s %-18s %-16s %s%n";
             System.out.printf(leftPad, transfer.getTransferId(), toOrFrom, otherPerson,
-                    NumberFormat.getCurrencyInstance().format(transfer.getAmount()));
+                    NumberFormat.getCurrencyInstance().format(transfer.getAmount()),
+                    getStatusDesc(transfer.getTransferStatusId()));
 
         }
         System.out.println("---------");
@@ -355,14 +321,12 @@ public class App {
         return menuSelection;
     }
 
+    /**
+     * Finds and prints the details of a specific transfer based on the
+     * transfer ID.
+     * Returns true if the transfer is found and printed, false otherwise.
+     */
     private boolean findAndPrintTransfer(int transferId) {
-        // Code implementation for finding and printing transfer details
-
-        /**
-         * Method to display a menu of pending transfer requests and allow the user to
-         * approve or reject a request.
-         * Handles the approval or rejection of transfer requests based on user input.
-         */
         Transfer transfer = transferService.getTransferById(transferId);
         if (transfer != null) {
             System.out.println("--------------------------------------------\r\n" + //
@@ -380,13 +344,13 @@ public class App {
         return false;
     }
 
+    /**
+     * Display a menu of pending transfer requests and allow the user to
+     * approve or reject a request.
+     */
     private int pendingRequestsMenu(Transfer[] transfers) {
         // Code implementation for displaying pending transfer requests menu
 
-        /*
-         * Method to approve or reject a specific transfer request.
-         * Updates the transfer status and account balances accordingly.
-         */
         int menuSelection;
         System.out.println("-------------------------------------------");
         System.out.println("Transfers");
@@ -405,12 +369,11 @@ public class App {
         return menuSelection;
     }
 
+    /**
+     * Method to approve or reject a specific transfer request.
+     * Updates the transfer status and account balances accordingly.
+     */
     private void approveOrReject(int menuSelection) {
-        // Code implementation for approving or rejecting a transfer request
-
-        /*
-         * Method to get the description of a transfer type based on the provided ID.
-         */
         Transfer transferToApproveOrReject = transferService.getTransferById(menuSelection);
         if (transferToApproveOrReject == null || transferToApproveOrReject.getTransferStatusId() != 1) {
             System.err.println("\nInvalid input");
@@ -442,12 +405,25 @@ public class App {
         }
     }
 
-    private String getTypeDesc(int id) {
-        // Code implementation for getting transfer type description
+    /**
+     * Method to check if a user with a specific ID exists in the provided array of
+     * users.
+     * Returns true if the user is found, false otherwise.
+     */
+    private boolean foundUser(int userId, User[] users) {
+        boolean found = false;
+        for (User user : users) {
+            if (user.getId() == userId) {
+                found = true;
+            }
+        }
+        return found;
+    }
 
-        /*
-         * Method to get the description of a transfer status based on the provided ID.
-         */
+    /**
+     * Gets the description of a transfer type based on the type ID.
+     */
+    private String getTypeDesc(int id) {
         String type = null;
         if (id == 1) {
             type = "Request";
@@ -457,9 +433,10 @@ public class App {
         return type;
     }
 
+    /**
+     * Gets the description of a transfer status based on the status ID.
+     */
     private String getStatusDesc(int id) {
-        // Code implementation for getting transfer status description
-
         String status = null;
         if (id == 1) {
             status = "Pending";
@@ -469,5 +446,24 @@ public class App {
             status = "Rejected";
         }
         return status;
+    }
+
+    /**
+     * Prints the list of users
+     * 
+     * @param users
+     */
+    public void printUsers(User[] users) {
+        System.out.println("-------------------------------------------\r\n" + //
+                "Users\r\n" + //
+                "ID          Name\r\n" + //
+                "-------------------------------------------");
+        for (User user : users) {
+            String leftPad = "%-10d %s%n";
+            if (!user.equals(currentUser.getUser())) {
+                System.out.printf(leftPad, user.getId(), user.getUsername());
+            }
+        }
+        System.out.println("---------");
     }
 }
